@@ -2,7 +2,37 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 void main() {
-  runApp(CuadreDeCajaApp());
+  runApp(SplashScreen());
+}
+
+class SplashScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    Future.delayed(Duration(seconds: 2), () {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => CuadreDeCajaApp()),
+      );
+    });
+
+    return MaterialApp(
+      home: Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.attach_money, size: 100, color: Colors.blueAccent),
+              SizedBox(height: 20),
+              Text(
+                'Cuadre de Efectivo',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class CuadreDeCajaApp extends StatelessWidget {
@@ -82,50 +112,51 @@ class _CuadreScreenState extends State<CuadreScreen> {
         title: Text('Cuadre de Efectivo'),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                'Cuadre de Efectivo',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 8),
-              buildCard(
-                child: TextField(
-                  controller: totalSistemaController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: 'Total Capturador',
-                  ),
-                  onChanged: (_) => setState(() {}),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    buildCard(
+                      child: TextField(
+                        controller: totalSistemaController,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          labelText: 'Total Capturador',
+                        ),
+                        onChanged: (_) => setState(() {}),
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    ...controllers.entries.map((entry) => buildRow(entry.key, entry.value)).toList(),
+                    SizedBox(height: 8),
+                    buildMonedasRow(),
+                    SizedBox(height: 16),
+                    Text(
+                      'Total Contado: \$${currencyFormat.format(totalGlobal)}',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      'Diferencia: \$${currencyFormat.format(diferencia)}',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: diferencia >= 0 ? Colors.red : Colors.green,
+                      ),
+                    ),
+                    SizedBox(height: 60),
+                  ],
                 ),
               ),
-              SizedBox(height: 8),
-              ...controllers.entries.map((entry) => buildRow(entry.key, entry.value)).toList(),
-              SizedBox(height: 8),
-              buildMonedasRow(),
-              SizedBox(height: 16),
-              Text(
-                'Total Contado: \$${currencyFormat.format(totalGlobal)}',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Diferencia: \$${currencyFormat.format(diferencia)}',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: diferencia >= 0 ? Colors.red : Colors.green,
-                ),
-              ),
-              SizedBox(height: 60),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: limpiarCampos,
