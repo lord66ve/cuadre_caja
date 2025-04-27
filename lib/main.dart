@@ -9,7 +9,7 @@ class CuadreDeCajaApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Cuadre',
+      title: 'Cuadre de Efectivo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         scaffoldBackgroundColor: Color(0xFFF5F5F5),
@@ -79,63 +79,60 @@ class _CuadreScreenState extends State<CuadreScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Cuadre'),
+        title: Text('Cuadre de Efectivo'),
+        centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView(
-                children: [
-                  buildCard(
-                    child: TextField(
-                      controller: totalSistemaController,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        labelText: 'Total Capturador',
-                      ),
-                      onChanged: (_) => setState(() {}),
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                  ...controllers.entries.map((entry) => buildRow(entry.key, entry.value)).toList(),
-                  SizedBox(height: 16),
-                  buildMonedasRow(),
-                  SizedBox(height: 24),
-                  AnimatedSwitcher(
-                    duration: Duration(milliseconds: 300),
-                    child: Text(
-                      'Total Contado: \$${currencyFormat.format(totalGlobal)}',
-                      key: ValueKey(totalGlobal),
-                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                  AnimatedSwitcher(
-                    duration: Duration(milliseconds: 300),
-                    child: Text(
-                      'Diferencia: \$${currencyFormat.format(diferencia)}',
-                      key: ValueKey(diferencia),
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: diferencia >= 0 ? Colors.red : Colors.green,
-                      ),
-                    ),
-                  ),
-                ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'Cuadre de Efectivo',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
               ),
-            ),
-          ],
+              SizedBox(height: 8),
+              buildCard(
+                child: TextField(
+                  controller: totalSistemaController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: 'Total Capturador',
+                  ),
+                  onChanged: (_) => setState(() {}),
+                ),
+              ),
+              SizedBox(height: 8),
+              ...controllers.entries.map((entry) => buildRow(entry.key, entry.value)).toList(),
+              SizedBox(height: 8),
+              buildMonedasRow(),
+              SizedBox(height: 16),
+              Text(
+                'Total Contado: \$${currencyFormat.format(totalGlobal)}',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 8),
+              Text(
+                'Diferencia: \$${currencyFormat.format(diferencia)}',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: diferencia >= 0 ? Colors.red : Colors.green,
+                ),
+              ),
+              SizedBox(height: 60),
+            ],
+          ),
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton: FloatingActionButton(
         onPressed: limpiarCampos,
-        label: Text('Limpiar Todo'),
-        icon: Icon(Icons.cleaning_services),
+        child: Icon(Icons.cleaning_services),
         backgroundColor: Colors.blueAccent,
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 
@@ -146,7 +143,7 @@ class _CuadreScreenState extends State<CuadreScreen> {
       ),
       elevation: 3,
       child: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.all(10.0),
         child: child,
       ),
     );
@@ -163,16 +160,16 @@ class _CuadreScreenState extends State<CuadreScreen> {
             children: [
               Image.asset(
                 imagePath,
-                width: 40,
-                height: 25,
+                width: 35,
+                height: 20,
                 errorBuilder: (context, error, stackTrace) => Icon(Icons.money),
               ),
-              SizedBox(width: 8),
-              Text('\$${currencyFormat.format(denominacion)}', style: TextStyle(fontSize: 18)),
+              SizedBox(width: 6),
+              Text('\$${currencyFormat.format(denominacion)}', style: TextStyle(fontSize: 16)),
             ],
           ),
           SizedBox(
-            width: 100,
+            width: 80,
             child: TextField(
               controller: controller,
               keyboardType: TextInputType.number,
@@ -182,10 +179,9 @@ class _CuadreScreenState extends State<CuadreScreen> {
               onChanged: (_) => setState(() {}),
             ),
           ),
-          SizedBox(width: 10),
           Text(
             '\$${currencyFormat.format((int.tryParse(controller.text) ?? 0) * denominacion)}',
-            style: TextStyle(fontSize: 18),
+            style: TextStyle(fontSize: 16),
           )
         ],
       ),
@@ -201,16 +197,16 @@ class _CuadreScreenState extends State<CuadreScreen> {
             children: [
               Image.asset(
                 'assets/billetes/monedas.png',
-                width: 40,
-                height: 25,
+                width: 35,
+                height: 20,
                 errorBuilder: (context, error, stackTrace) => Icon(Icons.attach_money),
               ),
-              SizedBox(width: 8),
-              Text('Monedas', style: TextStyle(fontSize: 18)),
+              SizedBox(width: 6),
+              Text('Monedas', style: TextStyle(fontSize: 16)),
             ],
           ),
           SizedBox(
-            width: 100,
+            width: 80,
             child: TextField(
               controller: monedasController,
               keyboardType: TextInputType.number,
@@ -220,10 +216,9 @@ class _CuadreScreenState extends State<CuadreScreen> {
               onChanged: (_) => setState(() {}),
             ),
           ),
-          SizedBox(width: 10),
           Text(
             '\$${currencyFormat.format(double.tryParse(monedasController.text) ?? 0)}',
-            style: TextStyle(fontSize: 18),
+            style: TextStyle(fontSize: 16),
           )
         ],
       ),
